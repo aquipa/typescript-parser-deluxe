@@ -11,6 +11,6 @@ export declare class NamedExport implements Export {
     start: number;
     end: number;
     from: string;
-    specifiers: SymbolSpecifier[];
+    specifiers: SymbolSpecifier[] | undefined;
     constructor(start: number, end: number, from: string);
 }

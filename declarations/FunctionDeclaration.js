@@ -10,9 +10,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @implements {ExportableDeclaration}
  */
 class FunctionDeclaration {
-    constructor(name, isExported, type, start, end) {
+    constructor(name, isExported, isAsync, type, start, end) {
         this.name = name;
         this.isExported = isExported;
+        this.isAsync = isAsync;
         this.type = type;
         this.start = start;
         this.end = end;

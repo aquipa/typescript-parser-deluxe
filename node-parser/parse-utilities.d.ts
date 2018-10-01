@@ -1,4 +1,4 @@
-import { Node, TypeNode } from 'typescript';
+import { Node, SyntaxKind, TypeNode } from 'typescript';
 import { DeclarationVisibility } from '../declarations/DeclarationVisibility';
 import { Resource } from '../resources/Resource';
 /**
@@ -27,6 +27,15 @@ export declare function isNodeDefaultExported(node: Node): boolean;
  * @returns {(string | undefined)}
  */
 export declare function getNodeType(node: TypeNode | undefined): string | undefined;
+/**
+ * Checks if a node contains a certain modifier (of a given kind)
+ *
+ * @export
+ * @param {Node} node
+ * @param {SyntaxKind} modifierKind
+ * @returns {boolean}
+ */
+export declare function containsModifier(node: Node, modifierKind: SyntaxKind): boolean;
 /**
  * Returns the enum value (visibility) of a node.
  *

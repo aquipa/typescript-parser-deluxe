@@ -11,11 +11,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @implements {TypedDeclaration}
  */
 class MethodDeclaration {
-    constructor(name, isAbstract, visibility, type, start, end) {
+    constructor(name, isAbstract, visibility, type, isOptional, isStatic, isAsync, start, end) {
         this.name = name;
         this.isAbstract = isAbstract;
         this.visibility = visibility;
         this.type = type;
+        this.isOptional = isOptional;
+        this.isStatic = isStatic;
+        this.isAsync = isAsync;
         this.start = start;
         this.end = end;
         this.parameters = [];

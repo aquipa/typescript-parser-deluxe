@@ -14,6 +14,7 @@ class InterfaceDeclaration {
         this.isExported = isExported;
         this.start = start;
         this.end = end;
+        this.accessors = [];
         this.properties = [];
         this.methods = [];
     }

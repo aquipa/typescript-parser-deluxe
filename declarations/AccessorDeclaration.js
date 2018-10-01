@@ -11,11 +11,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @implements {AbstractDeclaration}
  */
 class AccessorDeclaration {
-    constructor(name, visibility, type, isAbstract, start, end) {
+    constructor(name, visibility, type, isAbstract, isStatic, start, end) {
         this.name = name;
         this.visibility = visibility;
         this.type = type;
         this.isAbstract = isAbstract;
+        this.isStatic = isStatic;
         this.start = start;
         this.end = end;
     }

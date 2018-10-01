@@ -1,3 +1,4 @@
+"use strict";
 // export * from './class-parser';
 // export * from './enum-parser';
 // export * from './export-parser';
