@@ -23,6 +23,7 @@ class MethodDeclaration {
         this.end = end;
         this.parameters = [];
         this.variables = [];
+        this.typeArguments = [];
     }
 }
 exports.MethodDeclaration = MethodDeclaration;

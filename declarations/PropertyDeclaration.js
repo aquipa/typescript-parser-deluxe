@@ -17,6 +17,7 @@ class PropertyDeclaration {
         this.isStatic = isStatic;
         this.start = start;
         this.end = end;
+        this.typeArguments = [];
     }
 }
 exports.PropertyDeclaration = PropertyDeclaration;

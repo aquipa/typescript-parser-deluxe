@@ -32,6 +32,7 @@ export class MethodDeclaration implements
 
     public parameters: ParameterDeclaration[] = [];
     public variables: VariableDeclaration[] = [];
+    public typeArguments: ParameterDeclaration[] = [];
 
     constructor(
         public name: string,

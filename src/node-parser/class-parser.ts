@@ -3,8 +3,11 @@ import {
     ClassDeclaration,
     ConstructorDeclaration,
     Identifier,
+    MethodDeclaration,
     Node,
     ObjectBindingPattern,
+    ParameterDeclaration,
+    PropertyDeclaration,
     SyntaxKind,
 } from 'typescript';
 
@@ -55,6 +58,55 @@ export function parseClassIdentifiers(tsResource: Resource, node: Node): void {
         }
         parseClassIdentifiers(tsResource, child);
     }
+}
+
+/**
+ * Parse method parameters.
+ *
+ * @export
+ * @param {(FunctionDeclaration | MethodDeclaration | MethodSignature)} node
+ * @returns {TshParameter[]}
+ */
+export function parseTypeArguments(
+    node: TshParameter | TshProperty | PropertyDeclaration | MethodDeclaration,
+): TshParameter[] {
+
+    if (!node.type) return [];
+    if ((!(<any>node.type).typeArguments || !(<any>node.type).typeArguments.length)
+        && !(<any>node.type).members) return [];
+
+    let target;
+
+    if ((<any>node.type).typeArguments && (<any>node.type).typeArguments.length) {
+        if ((<any>node.type).typeArguments[0].constructor.name === 'TokenObject') {
+            return [];
+        }
+        if (!(<any>node.type).typeArguments[0].members) {
+            return [];
+        }
+        target = (<any>node.type).typeArguments[0].members;
+    } else if ((<any>node.type).members) {
+        target = (<any>node.type).members;
+    } else {
+        return [];
+    }
+    return target.reduce(
+        (all: TshParameter[], cur: ParameterDeclaration) => {
+            const params = all;
+            if (cur.type && (<any>cur.type).members) {
+                params.push(new TshParameter(
+                    <string>(cur.name as Identifier).escapedText, parseTypeArguments((<any>cur.type).members),
+                    cur.getStart(), cur.getEnd(),
+                ));
+            } else {
+                params.push(new TshParameter(
+                    <string>(cur.name as Identifier).escapedText, getNodeType(cur.type), cur.getStart(), cur.getEnd(),
+                ));
+            }
+            return params;
+        },
+        []);
+
 }
 
 /**
@@ -135,30 +187,30 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
             if (isPropertyDeclaration(o)) {
                 const actualCount = classDeclaration.properties.length;
                 if (o.modifiers) {
-                    classDeclaration.properties.push(
-                        new TshProperty(
-                            (o.name as Identifier).text,
-                            getNodeVisibility(o),
-                            getNodeType(o.type),
-                            !!o.questionToken,
-                            containsModifier(o, SyntaxKind.StaticKeyword),
-                            o.getStart(),
-                            o.getEnd(),
-                        ),
+                    const newProperty = new TshProperty(
+                        (o.name as Identifier).text,
+                        getNodeVisibility(o),
+                        getNodeType(o.type),
+                        !!o.questionToken,
+                        containsModifier(o, SyntaxKind.StaticKeyword),
+                        o.getStart(),
+                        o.getEnd(),
                     );
+                    newProperty.typeArguments = parseTypeArguments(o);
+                    classDeclaration.properties.push(newProperty);
                 }
                 if (actualCount === classDeclaration.properties.length) {
-                    classDeclaration.properties.push(
-                        new TshProperty(
-                            (o.name as Identifier).text,
-                            getNodeVisibility(o),
-                            getNodeType(o.type),
-                            !!o.questionToken,
-                            containsModifier(o, SyntaxKind.StaticKeyword),
-                            o.getStart(),
-                            o.getEnd(),
-                        ),
+                    const newProperty = new TshProperty(
+                        (o.name as Identifier).text,
+                        getNodeVisibility(o),
+                        getNodeType(o.type),
+                        !!o.questionToken,
+                        containsModifier(o, SyntaxKind.StaticKeyword),
+                        o.getStart(),
+                        o.getEnd(),
                     );
+                    newProperty.typeArguments = parseTypeArguments(o);
+                    classDeclaration.properties.push(newProperty);
                 }
                 return;
             }
@@ -209,6 +261,7 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
                     o.getEnd(),
                 );
                 method.parameters = parseMethodParams(o);
+                method.typeArguments = parseTypeArguments(o);
                 classDeclaration.methods.push(method);
                 parseFunctionParts(tsResource, method, o);
             }

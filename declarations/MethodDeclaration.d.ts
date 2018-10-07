@@ -24,5 +24,6 @@ export declare class MethodDeclaration implements AbstractDeclaration, AsyncDecl
     end?: number | undefined;
     parameters: ParameterDeclaration[];
     variables: VariableDeclaration[];
+    typeArguments: ParameterDeclaration[];
     constructor(name: string, isAbstract: boolean, visibility: DeclarationVisibility | undefined, type: string | undefined, isOptional: boolean, isStatic: boolean, isAsync: boolean, start?: number | undefined, end?: number | undefined);
 }

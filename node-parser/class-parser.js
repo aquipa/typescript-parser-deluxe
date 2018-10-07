@@ -33,6 +33,58 @@ function parseClassIdentifiers(tsResource, node) {
 }
 exports.parseClassIdentifiers = parseClassIdentifiers;
 /**
+ * Parse method parameters.
+ *
+ * @export
+ * @param {(FunctionDeclaration | MethodDeclaration | MethodSignature)} node
+ * @returns {TshParameter[]}
+ */
+function parseTypeArguments(node) {
+    if (!node.type)
+        return [];
+    if ((!node.type.typeArguments || !node.type.typeArguments.length)
+        && !node.type.members) {
+        return [];
+    }
+    let target;
+    if (node.type.typeArguments && node.type.typeArguments.length) {
+        if (node.type.typeArguments[0].constructor.name === 'TokenObject') {
+            console.log(node.type.typeArguments[0].kind)
+            if(node.type.typeArguments[0].kind === 119){
+                console.log(typescript_1.tokenToString(node))
+                return typescript_1.tokenToString(node);
+            }
+            return [];
+        }
+        if (!node.type.typeArguments[0].members) {
+            return [];
+        }
+        target = node.type.typeArguments[0].members;
+    }
+    else if (node.type.members) {
+        target = node.type.members;
+    }
+    else {
+        return [];
+    }
+    return target.reduce((all, cur) => {
+        const params = all;
+        if (cur.type && cur.type.members) {
+            if (node.name && node.name.escapedText === 'params' && node.parent.name.escapedText === 'GetPermissions') {
+                console.log('DING')
+                console.log(cur.type.members)
+                console.log(cur.type.members.map(m => parseTypeArguments(m)))
+            }
+            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd()));
+        }
+        else {
+            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parse_utilities_1.getNodeType(cur.type), cur.getStart(), cur.getEnd()));
+        }
+        return params;
+    }, []);
+}
+exports.parseTypeArguments = parseTypeArguments;
+/**
  * Parse information about a constructor. Contains parameters and used modifiers
  * (i.e. constructor(private name: string)).
  *
@@ -88,10 +140,14 @@ function parseClass(tsResource, node) {
             if (TypescriptGuards_1.isPropertyDeclaration(o)) {
                 const actualCount = classDeclaration.properties.length;
                 if (o.modifiers) {
-                    classDeclaration.properties.push(new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
+                    const newProperty = new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd());
+                    newProperty.typeArguments = parseTypeArguments(o);
+                    classDeclaration.properties.push(newProperty);
                 }
                 if (actualCount === classDeclaration.properties.length) {
-                    classDeclaration.properties.push(new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
+                    const newProperty = new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd());
+                    newProperty.typeArguments = parseTypeArguments(o);
+                    classDeclaration.properties.push(newProperty);
                 }
                 return;
             }
@@ -110,6 +166,7 @@ function parseClass(tsResource, node) {
             else if (TypescriptGuards_1.isMethodDeclaration(o)) {
                 const method = new MethodDeclaration_1.MethodDeclaration(o.name.text, o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.AsyncKeyword), o.getStart(), o.getEnd());
                 method.parameters = function_parser_1.parseMethodParams(o);
+                method.typeArguments = parseTypeArguments(o);
                 classDeclaration.methods.push(method);
                 function_parser_1.parseFunctionParts(tsResource, method, o);
             }
