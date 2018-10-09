@@ -43,16 +43,13 @@ function parseTypeArguments(node) {
     if (!node.type)
         return [];
     if ((!node.type.typeArguments || !node.type.typeArguments.length)
-        && !node.type.members) {
+        && !node.type.members)
         return [];
-    }
     let target;
     if (node.type.typeArguments && node.type.typeArguments.length) {
         if (node.type.typeArguments[0].constructor.name === 'TokenObject') {
-            console.log(node.type.typeArguments[0].kind)
-            if(node.type.typeArguments[0].kind === 119){
-                console.log(typescript_1.tokenToString(node))
-                return typescript_1.tokenToString(node);
+            if (node.type.typeArguments[0].kind === 119) {
+                return 'any';
             }
             return [];
         }
@@ -70,14 +67,15 @@ function parseTypeArguments(node) {
     return target.reduce((all, cur) => {
         const params = all;
         if (cur.type && cur.type.members) {
-            if (node.name && node.name.escapedText === 'params' && node.parent.name.escapedText === 'GetPermissions') {
-                console.log('DING')
-                console.log(cur.type.members)
-                console.log(cur.type.members.map(m => parseTypeArguments(m)))
+            if (!cur.name) {
+                return params;
             }
             params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd()));
         }
         else {
+            if (!cur.name) {
+                return params;
+            }
             params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parse_utilities_1.getNodeType(cur.type), cur.getStart(), cur.getEnd()));
         }
         return params;

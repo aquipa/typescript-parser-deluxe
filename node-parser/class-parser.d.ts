@@ -19,7 +19,7 @@ export declare function parseClassIdentifiers(tsResource: Resource, node: Node):
  * @param {(FunctionDeclaration | MethodDeclaration | MethodSignature)} node
  * @returns {TshParameter[]}
  */
-export declare function parseTypeArguments(node: TshParameter | TshProperty | PropertyDeclaration | MethodDeclaration): TshParameter[];
+export declare function parseTypeArguments(node: TshParameter | TshProperty | PropertyDeclaration | MethodDeclaration): TshParameter[] | string;
 /**
  * Parse information about a constructor. Contains parameters and used modifiers
  * (i.e. constructor(private name: string)).
