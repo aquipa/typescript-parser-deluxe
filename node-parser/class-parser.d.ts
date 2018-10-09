@@ -1,6 +1,8 @@
-import { ClassDeclaration, ConstructorDeclaration, Node } from 'typescript';
+import { ClassDeclaration, ConstructorDeclaration, MethodDeclaration, Node, PropertyDeclaration } from 'typescript';
 import { ClassDeclaration as TshClass } from '../declarations/ClassDeclaration';
 import { ConstructorDeclaration as TshConstructor } from '../declarations/ConstructorDeclaration';
+import { ParameterDeclaration as TshParameter } from '../declarations/ParameterDeclaration';
+import { PropertyDeclaration as TshProperty } from '../declarations/PropertyDeclaration';
 import { Resource } from '../resources/Resource';
 /**
  * Parses the identifiers of a class (usages).
@@ -10,6 +12,14 @@ import { Resource } from '../resources/Resource';
  * @param {Node} node
  */
 export declare function parseClassIdentifiers(tsResource: Resource, node: Node): void;
+/**
+ * Parse method parameters.
+ *
+ * @export
+ * @param {(FunctionDeclaration | MethodDeclaration | MethodSignature)} node
+ * @returns {TshParameter[]}
+ */
+export declare function parseTypeArguments(node: TshParameter | TshProperty | PropertyDeclaration | MethodDeclaration): TshParameter[] | string;
 /**
  * Parse information about a constructor. Contains parameters and used modifiers
  * (i.e. constructor(private name: string)).

@@ -118,8 +118,8 @@ export function parseTypeArguments(
 }
 
 /**
- * Parse method parameters. 
- * 
+ * Parse method parameters.
+ *
  * @export
  * @param {(FunctionDeclaration | MethodDeclaration | MethodSignature)} node
  * @returns {TshParameter[]}

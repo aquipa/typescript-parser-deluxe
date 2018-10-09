@@ -1,4 +1,4 @@
-import { AbstractDeclaration, CallableDeclaration, ScopedDeclaration, TypedDeclaration } from './Declaration';
+import { AbstractDeclaration, AsyncDeclaration, CallableDeclaration, OptionalDeclaration, ScopedDeclaration, StaticDeclaration, TypedDeclaration } from './Declaration';
 import { DeclarationVisibility } from './DeclarationVisibility';
 import { ParameterDeclaration } from './ParameterDeclaration';
 import { VariableDeclaration } from './VariableDeclaration';
@@ -12,14 +12,18 @@ import { VariableDeclaration } from './VariableDeclaration';
  * @implements {ScopedDeclaration}
  * @implements {TypedDeclaration}
  */
-export declare class MethodDeclaration implements AbstractDeclaration, CallableDeclaration, ScopedDeclaration, TypedDeclaration {
+export declare class MethodDeclaration implements AbstractDeclaration, AsyncDeclaration, CallableDeclaration, OptionalDeclaration, ScopedDeclaration, StaticDeclaration, TypedDeclaration {
     name: string;
     isAbstract: boolean;
     visibility: DeclarationVisibility | undefined;
     type: string | undefined;
+    isOptional: boolean;
+    isStatic: boolean;
+    isAsync: boolean;
     start?: number | undefined;
     end?: number | undefined;
     parameters: ParameterDeclaration[];
     variables: VariableDeclaration[];
-    constructor(name: string, isAbstract: boolean, visibility: DeclarationVisibility | undefined, type: string | undefined, start?: number | undefined, end?: number | undefined);
+    typeArguments: ParameterDeclaration[];
+    constructor(name: string, isAbstract: boolean, visibility: DeclarationVisibility | undefined, type: string | undefined, isOptional: boolean, isStatic: boolean, isAsync: boolean, start?: number | undefined, end?: number | undefined);
 }

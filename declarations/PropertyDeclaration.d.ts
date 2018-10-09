@@ -1,5 +1,6 @@
-import { ScopedDeclaration, TypedDeclaration } from './Declaration';
+import { OptionalDeclaration, ScopedDeclaration, StaticDeclaration, TypedDeclaration } from './Declaration';
 import { DeclarationVisibility } from './DeclarationVisibility';
+import { ParameterDeclaration } from './ParameterDeclaration';
 /**
  * Property declaration that contains its visibility.
  *
@@ -8,11 +9,14 @@ import { DeclarationVisibility } from './DeclarationVisibility';
  * @implements {ScopedDeclaration}
  * @implements {TypedDeclaration}
  */
-export declare class PropertyDeclaration implements ScopedDeclaration, TypedDeclaration {
+export declare class PropertyDeclaration implements OptionalDeclaration, ScopedDeclaration, StaticDeclaration, TypedDeclaration {
     name: string;
     visibility: DeclarationVisibility | undefined;
     type: string | undefined;
+    isOptional: boolean;
+    isStatic: boolean;
     start?: number | undefined;
     end?: number | undefined;
-    constructor(name: string, visibility: DeclarationVisibility | undefined, type: string | undefined, start?: number | undefined, end?: number | undefined);
+    typeArguments: ParameterDeclaration[];
+    constructor(name: string, visibility: DeclarationVisibility | undefined, type: string | undefined, isOptional: boolean, isStatic: boolean, start?: number | undefined, end?: number | undefined);
 }

@@ -40,6 +40,20 @@ function getNodeType(node) {
 }
 exports.getNodeType = getNodeType;
 /**
+ * Checks if a node contains a certain modifier (of a given kind)
+ *
+ * @export
+ * @param {Node} node
+ * @param {SyntaxKind} modifierKind
+ * @returns {boolean}
+ */
+function containsModifier(node, modifierKind) {
+    if (!node.modifiers)
+        return false;
+    return node.modifiers.some(mod => mod.kind === modifierKind);
+}
+exports.containsModifier = containsModifier;
+/**
  * Returns the enum value (visibility) of a node.
  *
  * @export

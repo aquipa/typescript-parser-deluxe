@@ -25,7 +25,7 @@ const usageAllowedIfLast = [
     typescript_1.SyntaxKind.BinaryExpression,
 ];
 const usagePredicates = [
-    (o) => o.parent && usageNotAllowedParents.indexOf(o.parent.kind) === -1,
+    (o) => o.parent !== undefined && usageNotAllowedParents.indexOf(o.parent.kind) === -1,
     allowedIfLastIdentifier,
     allowedIfPropertyAccessFirst,
 ];

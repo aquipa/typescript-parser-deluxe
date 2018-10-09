@@ -1,4 +1,4 @@
-import { AbstractDeclaration, ScopedDeclaration, TypedDeclaration } from './Declaration';
+import { AbstractDeclaration, ScopedDeclaration, StaticDeclaration, TypedDeclaration } from './Declaration';
 import { DeclarationVisibility } from './DeclarationVisibility';
 /**
  * Property accessor declaration. This element represents the base and will be used in setters and getters.
@@ -10,14 +10,15 @@ import { DeclarationVisibility } from './DeclarationVisibility';
  * @implements {TypedDeclaration}
  * @implements {AbstractDeclaration}
  */
-export declare abstract class AccessorDeclaration implements ScopedDeclaration, TypedDeclaration, AbstractDeclaration {
+export declare abstract class AccessorDeclaration implements ScopedDeclaration, StaticDeclaration, TypedDeclaration, AbstractDeclaration {
     name: string;
     visibility: DeclarationVisibility | undefined;
     type: string | undefined;
     isAbstract: boolean;
+    isStatic: boolean;
     start?: number | undefined;
     end?: number | undefined;
-    constructor(name: string, visibility: DeclarationVisibility | undefined, type: string | undefined, isAbstract: boolean, start?: number | undefined, end?: number | undefined);
+    constructor(name: string, visibility: DeclarationVisibility | undefined, type: string | undefined, isAbstract: boolean, isStatic: boolean, start?: number | undefined, end?: number | undefined);
 }
 /**
  * Getter declaration for a getter accessor of a class property.

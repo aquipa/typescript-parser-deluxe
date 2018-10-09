@@ -9,12 +9,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @implements {TypedDeclaration}
  */
 class PropertyDeclaration {
-    constructor(name, visibility, type, start, end) {
+    constructor(name, visibility, type, isOptional, isStatic, start, end) {
         this.name = name;
         this.visibility = visibility;
         this.type = type;
+        this.isOptional = isOptional;
+        this.isStatic = isStatic;
         this.start = start;
         this.end = end;
+        this.typeArguments = [];
     }
 }
 exports.PropertyDeclaration = PropertyDeclaration;

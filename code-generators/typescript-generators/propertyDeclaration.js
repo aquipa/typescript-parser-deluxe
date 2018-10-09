@@ -12,6 +12,6 @@ const DeclarationVisibility_1 = require("../../declarations/DeclarationVisibilit
 function generatePropertyDeclaration(property, { tabSize }) {
     return `${Array(tabSize + 1).join(' ')}` +
         `${property.visibility !== undefined ? DeclarationVisibility_1.getVisibilityText(property.visibility) + ' ' : ''}` +
-        `${property.name}${property.type ? `: ${property.type}` : ''};\n`;
+        `${property.name}${property.isOptional ? '?' : ''}${property.type ? `: ${property.type}` : ''};\n`;
 }
 exports.generatePropertyDeclaration = generatePropertyDeclaration;
