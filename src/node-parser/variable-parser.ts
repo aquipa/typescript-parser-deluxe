@@ -21,7 +21,7 @@ export function parseVariable(parent: Resource | CallableDeclaration, node: Vari
                 o.name.getText(),
                 isConst,
                 isNodeExported(node),
-                getNodeType(o.type),
+                getNodeType(o, o.type),
                 node.getStart(),
                 node.getEnd(),
             );

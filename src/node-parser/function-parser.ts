@@ -10,6 +10,7 @@ import {
     ParameterDeclaration,
     PropertySignature,
     SyntaxKind,
+    TypeNode,
     VariableStatement,
 } from 'typescript';
 
@@ -108,7 +109,7 @@ export function parseTypeArguments(
                 ));
             } else {
                 params.push(new TshParameter(
-                    <string>(cur.name as Identifier).escapedText, getNodeType(cur.type), cur.getStart(), cur.getEnd(),
+                    <string>(cur.name as Identifier).escapedText, getNodeType(cur, cur.type), cur.getStart(), cur.getEnd(),
                 ));
             }
             return params;
@@ -132,7 +133,7 @@ export function parseMethodParams(
             const params = all;
             if (isIdentifier(cur.name)) {
                 params.push(new TshParameter(
-                    (cur.name as Identifier).text, getNodeType(cur.type), cur.getStart(), cur.getEnd(),
+                    (cur.name as Identifier).text, getNodeType(cur, cur.type), cur.getStart(), cur.getEnd(),
                 ));
             } else if (isObjectBindingPattern(cur.name)) {
                 const elements = cur.name.elements;
@@ -140,11 +141,13 @@ export function parseMethodParams(
                 const boundParam = new ObjectBoundParameterDeclaration(cur.getStart(), cur.getEnd());
 
                 if (cur.type && isTypeReferenceNode(cur.type)) {
-                    boundParam.typeReference = getNodeType(cur.type);
+                    boundParam.typeReference = getNodeType(cur, cur.type);
                 } else if (cur.type && isTypeLiteralNode(cur.type)) {
                     types = cur.type.members
                         .filter(member => isPropertySignature(member))
-                        .map((signature: any) => getNodeType((signature as PropertySignature).type));
+                        .map((signature: any) => getNodeType(
+                            (signature as PropertySignature),
+                            (signature as PropertySignature).type));
                 }
 
                 boundParam.parameters = elements.map((bindingElement, index) => new TshParameter(
@@ -161,9 +164,9 @@ export function parseMethodParams(
                 const boundParam = new ArrayBoundParameterDeclaration(cur.getStart(), cur.getEnd());
 
                 if (cur.type && isTypeReferenceNode(cur.type)) {
-                    boundParam.typeReference = getNodeType(cur.type);
+                    boundParam.typeReference = getNodeType(cur, cur.type);
                 } else if (cur.type && isTupleTypeNode(cur.type)) {
-                    types = cur.type.elementTypes.map(type => getNodeType(type));
+                    types = cur.type.elementTypes.map((type:TypeNode) => { return type ? type.getText() :undefined; });
                 }
 
                 boundParam.parameters = elements.map((bindingElement, index) => new TshParameter(
@@ -195,7 +198,7 @@ export function parseFunction(resource: Resource, node: FunctionDeclaration): vo
         name,
         isNodeExported(node),
         containsModifier(node, SyntaxKind.AsyncKeyword),
-        getNodeType(node.type),
+        getNodeType(node, node.type),
         node.getStart(),
         node.getEnd(),
     );
