@@ -109,7 +109,7 @@ export function parseTypeArguments(
                     return params;
                 }
                 params.push(new TshParameter(
-                    <string>(cur.name as Identifier).escapedText, getNodeType(cur.type), cur.getStart(), cur.getEnd(),
+                    <string>(cur.name as Identifier).escapedText, getNodeType(cur, cur.type), cur.getStart(), cur.getEnd(),
                 ));
             }
             return params;
@@ -139,7 +139,7 @@ export function parseCtorParams(
         if (isIdentifier(o.name)) {
             ctor.parameters.push(
                 new TshParameter(
-                    (o.name as Identifier).text, getNodeType(o.type), o.getStart(), o.getEnd(),
+                    (o.name as Identifier).text, getNodeType(o, o.type), o.getStart(), o.getEnd(),
                 ),
             );
             if (!o.modifiers) {
@@ -149,7 +149,7 @@ export function parseCtorParams(
                 new TshProperty(
                     (o.name as Identifier).text,
                     getNodeVisibility(o),
-                    getNodeType(o.type),
+                    getNodeType(o, o.type),
                     !!o.questionToken,
                     containsModifier(o, SyntaxKind.StaticKeyword),
                     o.getStart(),
@@ -199,7 +199,7 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
                     const newProperty = new TshProperty(
                         (o.name as Identifier).text,
                         getNodeVisibility(o),
-                        getNodeType(o.type),
+                        getNodeType(o, o.type),
                         !!o.questionToken,
                         containsModifier(o, SyntaxKind.StaticKeyword),
                         o.getStart(),
@@ -212,7 +212,7 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
                     const newProperty = new TshProperty(
                         (o.name as Identifier).text,
                         getNodeVisibility(o),
-                        getNodeType(o.type),
+                        getNodeType(o, o.type),
                         !!o.questionToken,
                         containsModifier(o, SyntaxKind.StaticKeyword),
                         o.getStart(),
@@ -229,7 +229,7 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
                     new GetterDeclaration(
                         (o.name as Identifier).text,
                         getNodeVisibility(o),
-                        getNodeType(o.type),
+                        getNodeType(o, o.type),
                         o.modifiers !== undefined && o.modifiers.some(m => m.kind === SyntaxKind.AbstractKeyword),
                         containsModifier(o, SyntaxKind.StaticKeyword),
                         o.getStart(),
@@ -243,7 +243,7 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
                     new SetterDeclaration(
                         (o.name as Identifier).text,
                         getNodeVisibility(o),
-                        getNodeType(o.type),
+                        getNodeType(o, o.type),
                         o.modifiers !== undefined && o.modifiers.some(m => m.kind === SyntaxKind.AbstractKeyword),
                         containsModifier(o, SyntaxKind.StaticKeyword),
                         o.getStart(),
@@ -262,7 +262,7 @@ export function parseClass(tsResource: Resource, node: ClassDeclaration): void {
                     (o.name as Identifier).text,
                     o.modifiers !== undefined && o.modifiers.some(m => m.kind === SyntaxKind.AbstractKeyword),
                     getNodeVisibility(o),
-                    getNodeType(o.type),
+                    getNodeType(o, o.type),
                     !!o.questionToken,
                     containsModifier(o, SyntaxKind.StaticKeyword),
                     containsModifier(o, SyntaxKind.AsyncKeyword),
