@@ -26,10 +26,10 @@ function parseInterface(resource, node) {
     if (node.members) {
         node.members.forEach((o) => {
             if (TypescriptGuards_1.isPropertySignature(o)) {
-                interfaceDeclaration.properties.push(new PropertyDeclaration_1.PropertyDeclaration(o.name.text, 2 /* Public */, parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
+                interfaceDeclaration.properties.push(new PropertyDeclaration_1.PropertyDeclaration(o.name.text, 2 /* Public */, parse_utilities_1.getNodeType(o, o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
             }
             else if (TypescriptGuards_1.isMethodSignature(o)) {
-                const method = new MethodDeclaration_1.MethodDeclaration(o.name.text, true, 2 /* Public */, parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.AsyncKeyword), o.getStart(), o.getEnd());
+                const method = new MethodDeclaration_1.MethodDeclaration(o.name.text, true, 2 /* Public */, parse_utilities_1.getNodeType(o, o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.AsyncKeyword), o.getStart(), o.getEnd());
                 method.parameters = function_parser_1.parseMethodParams(o);
                 interfaceDeclaration.methods.push(method);
             }

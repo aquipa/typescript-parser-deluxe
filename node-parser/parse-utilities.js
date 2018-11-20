@@ -35,8 +35,58 @@ exports.isNodeDefaultExported = isNodeDefaultExported;
  * @param {(TypeNode | undefined)} node
  * @returns {(string | undefined)}
  */
-function getNodeType(node) {
-    return node ? node.getText() : undefined;
+function getNodeType(node, type) {
+    let output = undefined;
+    output = type ? type.getText() : undefined;
+    if (node && node.initializer && output === undefined) {
+        const initializer = node.initializer;
+        if (initializer !== undefined) {
+            output = getNodeType(initializer, undefined);
+        }
+    }
+    else if (node && output === undefined && node.kind === 101 || node.kind === 86) {
+        output = 'boolean';
+    }
+    else if (node && typescript_1.isStringLiteral(node) && output === undefined) {
+        output = 'string';
+    }
+    else if (node && typescript_1.isNumericLiteral(node) && output === undefined) {
+        output = 'number';
+    }
+    else if (node && typescript_1.isArrayLiteralExpression(node) && output === undefined) {
+        const type = [];
+        for (let i = 0; node.elements.length > i; i++) {
+            const curType = getNodeType(node.elements[i], undefined);
+            if (type.length === 0 && curType !== undefined) {
+                type.push(curType);
+            }
+            else if (curType !== undefined && type.indexOf(curType) === -1) {
+                type.push(curType);
+            }
+        }
+        if (type.length === 1) {
+            output = 'Array<' + type[0] + '>';
+        }
+        else {
+            output = 'Array<any>';
+            'Array<any>';
+        }
+    }
+    else if (node && typescript_1.isObjectLiteralExpression(node)) {
+        let count = 0;
+        let out = '{ ';
+        for (const prop of node.properties) {
+            const identif = prop.getText();
+            out += identif.slice(0, identif.indexOf(':') + 1) + ' ' + getNodeType(prop, undefined);
+            if (count !== node.properties.length - 1) {
+                out += ', ';
+            }
+            count += 1;
+        }
+        out += ' }';
+        output = out;
+    }
+    return output;
 }
 exports.getNodeType = getNodeType;
 /**

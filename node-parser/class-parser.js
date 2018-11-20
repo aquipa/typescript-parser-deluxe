@@ -76,7 +76,7 @@ function parseTypeArguments(node) {
             if (!cur.name) {
                 return params;
             }
-            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parse_utilities_1.getNodeType(cur.type), cur.getStart(), cur.getEnd()));
+            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parse_utilities_1.getNodeType(cur, cur.type), cur.getStart(), cur.getEnd()));
         }
         return params;
     }, []);
@@ -97,11 +97,11 @@ function parseCtorParams(parent, ctor, node) {
     }
     node.parameters.forEach((o) => {
         if (TypescriptGuards_1.isIdentifier(o.name)) {
-            ctor.parameters.push(new ParameterDeclaration_1.ParameterDeclaration(o.name.text, parse_utilities_1.getNodeType(o.type), o.getStart(), o.getEnd()));
+            ctor.parameters.push(new ParameterDeclaration_1.ParameterDeclaration(o.name.text, parse_utilities_1.getNodeType(o, o.type), o.getStart(), o.getEnd()));
             if (!o.modifiers) {
                 return;
             }
-            parent.properties.push(new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
+            parent.properties.push(new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o, o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
         }
         else if (TypescriptGuards_1.isObjectBindingPattern(o.name) || TypescriptGuards_1.isArrayBindingPattern(o.name)) {
             const identifiers = o.name;
@@ -138,22 +138,22 @@ function parseClass(tsResource, node) {
             if (TypescriptGuards_1.isPropertyDeclaration(o)) {
                 const actualCount = classDeclaration.properties.length;
                 if (o.modifiers) {
-                    const newProperty = new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd());
+                    const newProperty = new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o, o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd());
                     newProperty.typeArguments = parseTypeArguments(o);
                     classDeclaration.properties.push(newProperty);
                 }
                 if (actualCount === classDeclaration.properties.length) {
-                    const newProperty = new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd());
+                    const newProperty = new PropertyDeclaration_1.PropertyDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o, o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd());
                     newProperty.typeArguments = parseTypeArguments(o);
                     classDeclaration.properties.push(newProperty);
                 }
                 return;
             }
             if (TypescriptGuards_1.isGetAccessorDeclaration(o)) {
-                classDeclaration.accessors.push(new AccessorDeclaration_1.GetterDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
+                classDeclaration.accessors.push(new AccessorDeclaration_1.GetterDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o, o.type), o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
             }
             if (TypescriptGuards_1.isSetAccessorDeclaration(o)) {
-                classDeclaration.accessors.push(new AccessorDeclaration_1.SetterDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
+                classDeclaration.accessors.push(new AccessorDeclaration_1.SetterDeclaration(o.name.text, parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o, o.type), o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), o.getStart(), o.getEnd()));
             }
             if (TypescriptGuards_1.isConstructorDeclaration(o)) {
                 const ctor = new ConstructorDeclaration_1.ConstructorDeclaration(classDeclaration.name, o.getStart(), o.getEnd());
@@ -162,7 +162,7 @@ function parseClass(tsResource, node) {
                 function_parser_1.parseFunctionParts(tsResource, ctor, o);
             }
             else if (TypescriptGuards_1.isMethodDeclaration(o)) {
-                const method = new MethodDeclaration_1.MethodDeclaration(o.name.text, o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.AsyncKeyword), o.getStart(), o.getEnd());
+                const method = new MethodDeclaration_1.MethodDeclaration(o.name.text, o.modifiers !== undefined && o.modifiers.some(m => m.kind === typescript_1.SyntaxKind.AbstractKeyword), parse_utilities_1.getNodeVisibility(o), parse_utilities_1.getNodeType(o, o.type), !!o.questionToken, parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.StaticKeyword), parse_utilities_1.containsModifier(o, typescript_1.SyntaxKind.AsyncKeyword), o.getStart(), o.getEnd());
                 method.parameters = function_parser_1.parseMethodParams(o);
                 method.typeArguments = parseTypeArguments(o);
                 classDeclaration.methods.push(method);

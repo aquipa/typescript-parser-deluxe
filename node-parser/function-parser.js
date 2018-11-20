@@ -68,7 +68,7 @@ function parseTypeArguments(node) {
             params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd()));
         }
         else {
-            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parse_utilities_1.getNodeType(cur.type), cur.getStart(), cur.getEnd()));
+            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parse_utilities_1.getNodeType(cur, cur.type), cur.getStart(), cur.getEnd()));
         }
         return params;
     }, []);
@@ -85,19 +85,19 @@ function parseMethodParams(node) {
     return node.parameters.reduce((all, cur) => {
         const params = all;
         if (TypescriptGuards_1.isIdentifier(cur.name)) {
-            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.text, parse_utilities_1.getNodeType(cur.type), cur.getStart(), cur.getEnd()));
+            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.text, parse_utilities_1.getNodeType(cur, cur.type), cur.getStart(), cur.getEnd()));
         }
         else if (TypescriptGuards_1.isObjectBindingPattern(cur.name)) {
             const elements = cur.name.elements;
             let types = [];
             const boundParam = new ParameterDeclaration_1.ObjectBoundParameterDeclaration(cur.getStart(), cur.getEnd());
             if (cur.type && typescript_1.isTypeReferenceNode(cur.type)) {
-                boundParam.typeReference = parse_utilities_1.getNodeType(cur.type);
+                boundParam.typeReference = parse_utilities_1.getNodeType(cur, cur.type);
             }
             else if (cur.type && typescript_1.isTypeLiteralNode(cur.type)) {
                 types = cur.type.members
                     .filter(member => TypescriptGuards_1.isPropertySignature(member))
-                    .map((signature) => parse_utilities_1.getNodeType(signature.type));
+                    .map((signature) => parse_utilities_1.getNodeType(signature, signature.type));
             }
             boundParam.parameters = elements.map((bindingElement, index) => new ParameterDeclaration_1.ParameterDeclaration(bindingElement.name.getText(), types[index], bindingElement.getStart(), bindingElement.getEnd()));
             params.push(boundParam);
@@ -107,10 +107,10 @@ function parseMethodParams(node) {
             let types = [];
             const boundParam = new ParameterDeclaration_1.ArrayBoundParameterDeclaration(cur.getStart(), cur.getEnd());
             if (cur.type && typescript_1.isTypeReferenceNode(cur.type)) {
-                boundParam.typeReference = parse_utilities_1.getNodeType(cur.type);
+                boundParam.typeReference = parse_utilities_1.getNodeType(cur, cur.type);
             }
             else if (cur.type && typescript_1.isTupleTypeNode(cur.type)) {
-                types = cur.type.elementTypes.map(type => parse_utilities_1.getNodeType(type));
+                types = cur.type.elementTypes.map((type) => { return type ? type.getText() : undefined; });
             }
             boundParam.parameters = elements.map((bindingElement, index) => new ParameterDeclaration_1.ParameterDeclaration(bindingElement.getText(), types[index], bindingElement.getStart(), bindingElement.getEnd()));
             params.push(boundParam);
@@ -129,7 +129,7 @@ exports.parseMethodParams = parseMethodParams;
  */
 function parseFunction(resource, node) {
     const name = node.name ? node.name.text : parse_utilities_1.getDefaultResourceIdentifier(resource);
-    const func = new FunctionDeclaration_1.FunctionDeclaration(name, parse_utilities_1.isNodeExported(node), parse_utilities_1.containsModifier(node, typescript_1.SyntaxKind.AsyncKeyword), parse_utilities_1.getNodeType(node.type), node.getStart(), node.getEnd());
+    const func = new FunctionDeclaration_1.FunctionDeclaration(name, parse_utilities_1.isNodeExported(node), parse_utilities_1.containsModifier(node, typescript_1.SyntaxKind.AsyncKeyword), parse_utilities_1.getNodeType(node, node.type), node.getStart(), node.getEnd());
     if (parse_utilities_1.isNodeDefaultExported(node)) {
         func.isExported = false;
         resource.declarations.push(new DefaultDeclaration_1.DefaultDeclaration(func.name, resource));

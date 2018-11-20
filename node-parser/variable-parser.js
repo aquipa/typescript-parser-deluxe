@@ -15,7 +15,7 @@ function parseVariable(parent, node) {
     const isConst = node.declarationList.getChildren().some(o => o.kind === typescript_1.SyntaxKind.ConstKeyword);
     if (node.declarationList && node.declarationList.declarations) {
         node.declarationList.declarations.forEach((o) => {
-            const declaration = new VariableDeclaration_1.VariableDeclaration(o.name.getText(), isConst, parse_utilities_1.isNodeExported(node), parse_utilities_1.getNodeType(o.type), node.getStart(), node.getEnd());
+            const declaration = new VariableDeclaration_1.VariableDeclaration(o.name.getText(), isConst, parse_utilities_1.isNodeExported(node), parse_utilities_1.getNodeType(o, o.type), node.getStart(), node.getEnd());
             if (TypescriptHeroGuards_1.isCallableDeclaration(parent)) {
                 parent.variables.push(declaration);
             }

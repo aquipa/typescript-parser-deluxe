@@ -26,7 +26,7 @@ export declare function isNodeDefaultExported(node: Node): boolean;
  * @param {(TypeNode | undefined)} node
  * @returns {(string | undefined)}
  */
-export declare function getNodeType(node: TypeNode | undefined): string | undefined;
+export declare function getNodeType(node: any, type: TypeNode | undefined): string | undefined;
 /**
  * Checks if a node contains a certain modifier (of a given kind)
  *
