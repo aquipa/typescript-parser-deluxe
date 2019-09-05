@@ -65,6 +65,7 @@ function parseTypeArguments(node) {
         return [];
     }
     const parentsToChildren = new Map();
+    const positionCache = {};
     return target.reduce((all, cur) => {
         const params = all;
         if (cur.type && cur.type.members) {
@@ -81,8 +82,9 @@ function parseTypeArguments(node) {
             const newParam = new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd());
             for (const arr of parentsToChildren.values()) {
                 for (const item of arr) {
-                    // const finalInsert = (item.kind === 163) ? item.getText() : 
-                    // console.log(item.getText())
+                    if (positionCache[item.pos] === true) {
+                        continue;
+                    }
                     let finalText;
                     if (item.kind === 163) {
                         // its an index signature.

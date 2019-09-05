@@ -94,6 +94,7 @@ export function parseTypeArguments(
         return [];
     }
     const parentsToChildren = new Map();
+    const positionCache: { [n: number]: boolean } = {};
     return target.reduce(
         (all: TshParameter[], cur: ParameterDeclaration) => {
             const params = all;
@@ -116,8 +117,9 @@ export function parseTypeArguments(
 
                 for (const arr of parentsToChildren.values()) {
                     for (const item of arr) {
-                        // const finalInsert = (item.kind === 163) ? item.getText() : 
-                        // console.log(item.getText())
+                        if (positionCache[item.pos] === true) {
+                            continue;
+                        }
                         let finalText;
                         if (item.kind === 163) {
                             // its an index signature.
