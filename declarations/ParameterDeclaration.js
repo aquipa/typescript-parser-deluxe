@@ -14,6 +14,7 @@ class ParameterDeclaration {
         this.type = type;
         this.start = start;
         this.end = end;
+        this.members = [];
     }
 }
 exports.ParameterDeclaration = ParameterDeclaration;

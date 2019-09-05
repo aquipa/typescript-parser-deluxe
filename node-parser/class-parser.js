@@ -64,13 +64,43 @@ function parseTypeArguments(node) {
     else {
         return [];
     }
+    const parentsToChildren = new Map();
     return target.reduce((all, cur) => {
         const params = all;
         if (cur.type && cur.type.members) {
             if (!cur.name) {
                 return params;
             }
-            params.push(new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd()));
+            // it's an array of members.
+            for (const member of cur.type.members) {
+                if (!parentsToChildren.get(cur)) {
+                    parentsToChildren.set(cur, []);
+                }
+                parentsToChildren.get(cur).push(member);
+            }
+            const newParam = new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd());
+            for (const arr of parentsToChildren.values()) {
+                for (const item of arr) {
+                    // const finalInsert = (item.kind === 163) ? item.getText() : 
+                    // console.log(item.getText())
+                    let finalText;
+                    if (item.kind === 163) {
+                        // its an index signature.
+                        finalText = '';
+                        for (const child of item.getChildren()) {
+                            finalText += child.getText();
+                            if (child.kind === 23) {
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        finalText = item.name.escapedText;
+                    }
+                    newParam.members.push(new ParameterDeclaration_1.ParameterDeclaration(finalText, item.type.getText(), item.getStart(), item.getEnd()));
+                }
+            }
+            params.push(newParam);
         }
         else {
             if (!cur.name) {

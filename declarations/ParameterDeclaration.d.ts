@@ -12,6 +12,7 @@ export declare class ParameterDeclaration implements TypedDeclaration {
     type: any | undefined;
     start?: number | undefined;
     end?: number | undefined;
+    members: ParameterDeclaration[];
     constructor(name: string, type: any | undefined, start?: number | undefined, end?: number | undefined);
 }
 export declare class BoundParameterDeclaration extends ParameterDeclaration {

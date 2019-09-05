@@ -93,6 +93,7 @@ export function parseTypeArguments(
     } else {
         return [];
     }
+    const parentsToChildren = new Map();
     return target.reduce(
         (all: TshParameter[], cur: ParameterDeclaration) => {
             const params = all;
@@ -100,10 +101,48 @@ export function parseTypeArguments(
                 if (!cur.name) {
                     return params;
                 }
-                params.push(new TshParameter(
-                    <string>(cur.name as Identifier).escapedText, parseTypeArguments((<any>cur.type).members),
-                    cur.getStart(), cur.getEnd(),
-                ));
+
+                // it's an array of members.
+                for (const member of cur.type.members) {
+                    if (!parentsToChildren.get(cur)) {
+                        parentsToChildren.set(cur, [])
+                    }
+                    parentsToChildren.get(cur).push(member)
+                }
+
+                const newParam = new TshParameter(<string>(cur.name as Identifier).escapedText,
+                    parseTypeArguments(cur.type.members as any), cur.getStart(), cur.getEnd());
+
+
+                for (const arr of parentsToChildren.values()) {
+                    for (const item of arr) {
+                        // const finalInsert = (item.kind === 163) ? item.getText() : 
+                        // console.log(item.getText())
+                        let finalText;
+                        if (item.kind === 163) {
+                            // its an index signature.
+                            finalText = ''
+                            for (const child of item.getChildren()) {
+                                finalText += child.getText();
+                                if (child.kind === 23) {
+                                    break;
+                                }
+                            }
+                        } else {
+                            finalText = item.name.escapedText
+                        }
+                        newParam.members.push(
+                            new TshParameter(finalText,
+                                item.type.getText(),
+                                item.getStart(),
+                                item.getEnd()
+                            )
+                        )
+                    }
+                }
+
+                params.push(newParam);
+
             } else {
                 if (!cur.name) {
                     return params;

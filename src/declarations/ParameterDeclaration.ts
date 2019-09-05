@@ -9,6 +9,7 @@ import { TypedDeclaration } from './Declaration';
  * @implements {TypedDeclaration}
  */
 export class ParameterDeclaration implements TypedDeclaration {
+    public members: ParameterDeclaration[] = [];
     constructor(public name: string, public type: any | undefined, public start?: number, public end?: number) { }
 }
 
