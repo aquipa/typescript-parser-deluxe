@@ -85,6 +85,7 @@ function parseTypeArguments(node) {
                     if (positionCache[item.pos] === true) {
                         continue;
                     }
+                    positionCache[item.pos] = true;
                     let finalText;
                     if (item.kind === 163) {
                         // its an index signature.
