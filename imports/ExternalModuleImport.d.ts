@@ -12,7 +12,7 @@ export declare class ExternalModuleImport implements AliasedImport {
     alias: string;
     start?: number | undefined;
     end?: number | undefined;
-    readonly isNew: boolean;
+    get isNew(): boolean;
     constructor(libraryName: string, alias: string, start?: number | undefined, end?: number | undefined);
     /**
      * Clone the current import object.

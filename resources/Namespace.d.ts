@@ -20,8 +20,8 @@ export declare class Namespace implements Resource, Node {
     declarations: Declaration[];
     resources: Resource[];
     usages: string[];
-    readonly identifier: string;
-    readonly nonLocalUsages: string[];
+    get identifier(): string;
+    get nonLocalUsages(): string[];
     constructor(name: string, start: number, end: number);
     /**
      * Function that calculates the alias name of a namespace.

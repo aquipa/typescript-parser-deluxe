@@ -16,6 +16,6 @@ export declare class DefaultDeclaration implements ExportableDeclaration {
     end?: number | undefined;
     readonly isExported: boolean;
     private exported;
-    readonly exportedDeclaration: Declaration;
+    get exportedDeclaration(): Declaration;
     constructor(name: string, resource: Resource, start?: number | undefined, end?: number | undefined);
 }

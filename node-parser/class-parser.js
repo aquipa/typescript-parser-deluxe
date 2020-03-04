@@ -76,15 +76,19 @@ function parseTypeArguments(node) {
                 if (!parentsToChildren.get(cur)) {
                     parentsToChildren.set(cur, []);
                 }
-                parentsToChildren.get(cur).push(member);
+                const c = parentsToChildren.get(cur);
+                if (c) {
+                    c.push(member);
+                }
             }
             const newParam = new ParameterDeclaration_1.ParameterDeclaration(cur.name.escapedText, parseTypeArguments(cur.type.members), cur.getStart(), cur.getEnd());
-            for (const arr of parentsToChildren.values()) {
-                for (const item of arr) {
-                    // const finalInsert = (item.kind === 163) ? item.getText() : 
+            const c = parentsToChildren.get(cur);
+            if (c) {
+                for (const item of c) {
+                    // const finalInsert = (item.kind === 163) ? item.getText() :
                     // console.log(item.getText())
                     let finalText;
-                    if (item.kind === 163) {
+                    if (item.kind === 167) {
                         // its an index signature.
                         finalText = '';
                         for (const child of item.getChildren()) {
@@ -93,6 +97,9 @@ function parseTypeArguments(node) {
                                 break;
                             }
                         }
+                    }
+                    else if (!item.name) {
+                        continue;
                     }
                     else {
                         finalText = item.name.escapedText;

@@ -23,8 +23,8 @@ export declare class File implements Resource, Node {
     declarations: Declaration[];
     resources: Resource[];
     usages: string[];
-    readonly identifier: string;
-    readonly nonLocalUsages: string[];
+    get identifier(): string;
+    get nonLocalUsages(): string[];
     /**
      * Returns the parsed path of a resource.
      *
@@ -32,7 +32,7 @@ export declare class File implements Resource, Node {
      * @type {ParsedPath}
      * @memberof File
      */
-    readonly parsedPath: ParsedPath;
+    get parsedPath(): ParsedPath;
     /**
      * Determines if a file is a workspace file or an external resource.
      *
@@ -40,6 +40,6 @@ export declare class File implements Resource, Node {
      * @type {boolean}
      * @memberof File
      */
-    readonly isWorkspaceFile: boolean;
+    get isWorkspaceFile(): boolean;
     constructor(filePath: string, rootPath: string, start: number, end: number);
 }

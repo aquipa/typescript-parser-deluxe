@@ -1,12 +1,12 @@
 import {
     ArrayBindingPattern,
     ClassDeclaration,
+    ClassLikeDeclarationBase,
     ConstructorDeclaration,
     Identifier,
     MethodDeclaration,
     Node,
     ObjectBindingPattern,
-    ParameterDeclaration,
     PropertyDeclaration,
     SyntaxKind,
 } from 'typescript';
@@ -93,9 +93,10 @@ export function parseTypeArguments(
     } else {
         return [];
     }
-    const parentsToChildren = new Map();
+    const parentsToChildren = new Map<ClassLikeDeclarationBase
+        & { type: { members: ClassLikeDeclarationBase[]; } }, ClassLikeDeclarationBase[]>();
     return target.reduce(
-        (all: TshParameter[], cur: ParameterDeclaration) => {
+        (all: TshParameter[], cur: ClassLikeDeclarationBase & { type: { members: ClassLikeDeclarationBase[] } }) => {
             const params = all;
             if (cur.type && (<any>cur.type).members) {
                 if (!cur.name) {
@@ -105,50 +106,59 @@ export function parseTypeArguments(
                 // it's an array of members.
                 for (const member of cur.type.members) {
                     if (!parentsToChildren.get(cur)) {
-                        parentsToChildren.set(cur, [])
+                        parentsToChildren.set(cur, []);
                     }
-                    parentsToChildren.get(cur).push(member)
+                    const c = parentsToChildren.get(cur);
+                    if (c) {
+                        c.push(member);
+                    }
                 }
 
-                const newParam = new TshParameter(<string>(cur.name as Identifier).escapedText,
-                    parseTypeArguments(cur.type.members as any), cur.getStart(), cur.getEnd());
+                const newParam = new TshParameter(
+                    <string>(cur.name as Identifier).escapedText,
+                    parseTypeArguments(cur.type.members as any),
+                    cur.getStart(),
+                    cur.getEnd());
 
-
-                for (const arr of parentsToChildren.values()) {
-                    for (const item of arr) {
-                        // const finalInsert = (item.kind === 163) ? item.getText() : 
+                const c = parentsToChildren.get(cur);
+                if (c) {
+                    for (const item of c) {
+                        // const finalInsert = (item.kind === 163) ? item.getText() :
                         // console.log(item.getText())
                         let finalText;
-                        if (item.kind === 163) {
+                        if (item.kind === 167) {
                             // its an index signature.
-                            finalText = ''
+                            finalText = '';
                             for (const child of item.getChildren()) {
                                 finalText += child.getText();
                                 if (child.kind === 23) {
                                     break;
                                 }
                             }
+                        } else if (!item.name) {
+                            continue;
                         } else {
-                            finalText = item.name.escapedText
+                            finalText = item.name.escapedText;
                         }
                         newParam.members.push(
-                            new TshParameter(finalText,
-                                item.type.getText(),
+                            new TshParameter(
+                                finalText as string,
+                                (item as any).type.getText(),
                                 item.getStart(),
-                                item.getEnd()
-                            )
-                        )
+                                item.getEnd(),
+                            ),
+                        );
                     }
                 }
 
                 params.push(newParam);
-
             } else {
                 if (!cur.name) {
                     return params;
                 }
                 params.push(new TshParameter(
-                    <string>(cur.name as Identifier).escapedText, getNodeType(cur, cur.type), cur.getStart(), cur.getEnd(),
+                    <string>(cur.name as Identifier).escapedText,
+                    getNodeType(cur, (cur as any).type), cur.getStart(), cur.getEnd(),
                 ));
             }
             return params;
