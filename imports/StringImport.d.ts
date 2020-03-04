@@ -10,7 +10,7 @@ export declare class StringImport implements Import {
     libraryName: string;
     start?: number | undefined;
     end?: number | undefined;
-    readonly isNew: boolean;
+    get isNew(): boolean;
     constructor(libraryName: string, start?: number | undefined, end?: number | undefined);
     /**
      * Clone the current import object.

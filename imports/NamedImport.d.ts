@@ -16,7 +16,7 @@ export declare class NamedImport implements Import {
     end?: number | undefined;
     specifiers: SymbolSpecifier[];
     defaultAlias?: string;
-    readonly isNew: boolean;
+    get isNew(): boolean;
     constructor(libraryName: string, start?: number | undefined, end?: number | undefined);
     /**
      * Clone the current import object.

@@ -21,6 +21,6 @@ export declare class AssignedExport implements Export {
      * @type {((ExportableDeclaration | Resource)[])}
      * @memberof AssignedExport
      */
-    readonly exported: (ExportableDeclaration | Resource)[];
+    get exported(): (ExportableDeclaration | Resource)[];
     constructor(start: number, end: number, declarationIdentifier: string, resource: Resource);
 }

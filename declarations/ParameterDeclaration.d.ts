@@ -20,8 +20,10 @@ export declare class BoundParameterDeclaration extends ParameterDeclaration {
     private endCharacter;
     parameters: ParameterDeclaration[];
     typeReference: string | undefined;
-    name: string;
-    type: string;
+    get name(): string;
+    set name(_: string);
+    get type(): string;
+    set type(_: string);
     constructor(startCharacter: string, endCharacter: string, start?: number, end?: number);
 }
 export declare class ObjectBoundParameterDeclaration extends BoundParameterDeclaration {
