@@ -65,7 +65,6 @@ function parseTypeArguments(node) {
         return [];
     }
     const parentsToChildren = new Map();
-    const positionCache = {};
     return target.reduce((all, cur) => {
         const params = all;
         if (cur.type && cur.type.members) {
